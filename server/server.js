@@ -1,19 +1,14 @@
-import express, { json } from "express"
-import dotenv from "dotenv"
-import cors from "cors"
-
-const app = express()
-dotenv.config()
-
-app.use(express.json())
-app.use(cors())
-
-const port = process.env.PORT || 7777
-
-app.get("/" , (req, res) => {
-  res.send("Hello Shiva")
+const io = require("socket.io")(3003, {
+  cors:{
+     origin: "http://localhost:5173",
+     methods: ["GET", "POST"]
+  },
 })
 
-app.listen(port, () => {
-  console.log(`App is running on port http://localhost:${port}`)
+
+io.on("connection", socket => {
+  socket.on('send-changes', delta => {
+    console.log(delta)
+  })
+ 
 })
