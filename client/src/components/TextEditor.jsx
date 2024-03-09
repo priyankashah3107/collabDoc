@@ -47,22 +47,22 @@ useEffect(() => {
 
   
    // delta
-useEffect(() => {
-  if (quillRef.current) {
-    const quill = quillRef.current.getEditor(); // Get Quill instance
-
-    const handler = (delta, oldDelta, source) => {
-      if (source !== 'user') return;
-      socket.emit("send-changes", delta);
-    };
-
-    quill.on('text-change', handler); // Use quill instance to add event handler
-
-    return () => {
-      quill.off('text-change', handler); // Remove handler on cleanup
-    };
-  }
-}, [socket, quillRef]); // Include quillRef in dependency array
+   useEffect(() => {
+    if (quillRef.current) {
+      const quill = quillRef.current.getEditor(); // Get Quill instance
+  
+      const handler = (delta, oldDelta, source) => {
+        if (source !== 'user') return;
+        socket.emit("send-changes", delta);
+      };
+  
+      quill.on('text-change', handler); // Use quill instance to add event handler
+  
+      return () => {
+        quill.off('text-change', handler); // Remove handler on cleanup
+      };
+    }
+  }, [socket, quillRef]); // Include quillRef in the dependency array
 
 
 // whenever documentId, socket and quill is changing

@@ -9,6 +9,11 @@ body{
   
 }
 
+.message-container {
+  display: flex;
+  flex-direction: row;  /* Default is 'column', change it to 'row' */
+}
+
 .container .ql-editor {
   width: 8.5in;
   min-height: 11in;
@@ -56,3 +61,4 @@ body{
     display: none;
    }
 }
+
