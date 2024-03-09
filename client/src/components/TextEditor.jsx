@@ -20,8 +20,26 @@ function TextEditor() {
     }
 
    }, [])
+  
+// update the doc value 
 
-    // delta
+useEffect(() => {
+  if (socket && quillRef.current) {
+    const quill = quillRef.current.getEditor(); // Get Quill instance
+
+    const handler = delta => {
+      quill.updateContents(delta);
+    };
+
+    socket.on('recive-changes', handler); // Use quill instance to add event handler
+
+    return () => {
+      socket.off('recive-changes', handler); // Remove handler on cleanup
+    };
+  }
+}, [socket, quillRef]); // Include quillRef in dependency array
+
+  
    // delta
 useEffect(() => {
   if (quillRef.current) {
