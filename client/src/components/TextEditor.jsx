@@ -70,6 +70,13 @@ useEffect(() => {
 useEffect(() => {
     if( socket && quillRef.current) {
       const quill = quillRef.current.getEditor(); 
+
+      socket.once("load-document", document => {
+        quill.setContents(document)
+        quill.enable()
+      })
+       
+      socket.emit("get-document", documentId)
     }
 }, [socket, quillRef, documentId])
 

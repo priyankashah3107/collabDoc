@@ -23,10 +23,18 @@ const io = require("socket.io")(3003, {
 
 
 io.on("connection", socket => {
-  connectToMongoDb
-  socket.on('send-changes', delta => {
-    // console.log(delta)
-    socket.broadcast.emit("recive-changes", delta)
+  // connectToMongoDb
+  socket.on("get-document", documentId => {
+    const data = ""
+    // Id wise room mei join krna
+    socket.join(documentId)
+    socket.emit("load-document", data)
+
+    socket.on('send-changes', delta => {
+      // console.log(delta)
+      // socket.broadcast.emit("recive-changes", delta)
+      socket.broadcast.to(documentId).emit("recive-changes", delta)
+    })
   })
  
 })
