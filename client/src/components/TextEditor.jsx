@@ -3,6 +3,7 @@ import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import {io} from "socket.io-client"
 import { useParams } from "react-router-dom"
+const SAVE_INTERVAL_MS = 2000
 
 function TextEditor() {
   const [value, setValue] = useState('')
@@ -79,6 +80,24 @@ useEffect(() => {
       socket.emit("get-document", documentId)
     }
 }, [socket, quillRef, documentId])
+
+
+// everyCouple of second when we save we set the iterval
+
+useEffect(() => {
+  if (socket && quillRef.current) {
+    const quill = quillRef.current.getEditor();
+    if (socket == null || quill == null) return;
+
+    const interval = setInterval(() => {
+      socket.emit("save-document", quill.getContents());
+    }, SAVE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }
+}, [socket, quillRef]);
 
   const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
