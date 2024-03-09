@@ -30,7 +30,7 @@ function TextEditor() {
   }
 
   return (
-    <ReactQuill theme="snow" value={value} onChange={setValue} modules={module} />
+    <ReactQuill  className="container" theme="snow" value={value} onChange={setValue} modules={module} />
   )
 }
 
