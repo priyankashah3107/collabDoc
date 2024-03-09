@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import {io} from "socket.io-client"
@@ -6,31 +6,40 @@ import {io} from "socket.io-client"
 function TextEditor() {
   const [value, setValue] = useState('')
   const [socket, setSocket] = useState()
-  const [quill, setQuill] = useState()
+   const quillRef = useRef(null)
 
    useEffect(() => {
     const s =  io("http://localhost:3003")
     setSocket(s)
 
     return () => {
-      socket.disconnect()
+      if(socket){
+        socket.disconnect()
+      }
+      
     }
 
    }, [])
 
     // delta
-   useEffect(() => {
-      const handler = (delta, oldDelta, source) => {
-        if(source !== 'user') return;
-        socket.emit("send-changes", delta)
-       }
-      quill.on('text-change', handler);
+   // delta
+useEffect(() => {
+  if (quillRef.current) {
+    const quill = quillRef.current.getEditor(); // Get Quill instance
 
-      return () => {
-        quill.off('text-change', handler)
-      }
+    const handler = (delta, oldDelta, source) => {
+      if (source !== 'user') return;
+      socket.emit("send-changes", delta);
+    };
 
-   }, [socket, quill])
+    quill.on('text-change', handler); // Use quill instance to add event handler
+
+    return () => {
+      quill.off('text-change', handler); // Remove handler on cleanup
+    };
+  }
+}, [socket, quillRef]); // Include quillRef in dependency array
+
 
   const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -58,7 +67,7 @@ function TextEditor() {
   }
 
   return (
-    <ReactQuill  className="container" theme="snow" value={value} onChange={setValue} modules={module} />
+    <ReactQuill ref={quillRef} className="container" theme="snow" value={value} onChange={setValue} modules={module} />
   )
 }
 
