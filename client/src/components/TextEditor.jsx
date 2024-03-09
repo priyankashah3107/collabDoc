@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import {io} from "socket.io-client"
+import { useParams } from "react-router-dom"
 
 function TextEditor() {
   const [value, setValue] = useState('')
   const [socket, setSocket] = useState()
+  const {id: documentId} = useParams()
    const quillRef = useRef(null)
+   console.log(documentId)
 
    useEffect(() => {
     const s =  io("http://localhost:3003")
@@ -21,6 +24,8 @@ function TextEditor() {
 
    }, [])
   
+
+
 // update the doc value 
 
 useEffect(() => {
@@ -58,6 +63,15 @@ useEffect(() => {
   }
 }, [socket, quillRef]); // Include quillRef in dependency array
 
+
+// whenever documentId, socket and quill is changing
+// Updatging the value on particular id 
+
+useEffect(() => {
+    if( socket && quillRef.current) {
+      const quill = quillRef.current.getEditor(); 
+    }
+}, [socket, quillRef, documentId])
 
   const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
